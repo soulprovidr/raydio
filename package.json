@@ -1,0 +1,9 @@
+{
+  "name": "raydio",
+  "version": "1.0.0",
+  "description": "JavaScript music player.",
+  "repository": "git@github.com:soulprovidr/raydio",
+  "author": "Shola Anozie <shola@soulprovidr.fm>",
+  "license": "GNU GPLv3",
+  "private": true
+}
