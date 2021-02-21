@@ -5,5 +5,9 @@
   "repository": "git@github.com:soulprovidr/raydio",
   "author": "Shola Anozie <shola@soulprovidr.fm>",
   "license": "GNU GPLv3",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.5"
+  }
 }
