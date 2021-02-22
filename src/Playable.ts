@@ -12,7 +12,6 @@ export interface PlayableMeta {
 
 export interface Playable {
   readonly duration: Optional<number>;
-  readonly isLive?: boolean;
   readonly meta: PlayableMeta;
   readonly progress: Optional<number>;
   readonly src: string;

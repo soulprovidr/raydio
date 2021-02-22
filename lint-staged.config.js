@@ -1,4 +1,9 @@
 module.exports = {
-  "*.{js,ts}": ["tsc -noEmit -p .", "eslint --fix", "prettier --write"],
+  "*.{ts}": [
+    "tsc -noEmit",
+    "eslint --fix",
+    "prettier --write",
+    "jest --bail --findRelatedTests",
+  ],
   "*.{json}": "prettier --write",
 };

@@ -1,10 +1,8 @@
 import { Playable } from "./Playable";
 
 export enum RaydioCommand {
-  Mute = "MUTE",
   Pause = "PAUSE",
   Play = "PLAY",
-  SetVolume = "SET_VOLUME",
   Stop = "STOP",
 }
 
@@ -23,66 +21,41 @@ export enum RaydioStatus {
   Paused,
 }
 
-const { Mute, Pause, Play, SetVolume, Stop } = RaydioCommand;
-const { Stopped } = RaydioStatus;
+const { Pause, Play, Stop } = RaydioCommand;
+const { Stopped, Buffering, Paused, Playing } = RaydioStatus;
 
 export class Raydio {
-  private commands: Map<RaydioCommand, any>;
+  private currentStatus: RaydioStatus = Stopped;
   private options: RaydioOptions;
-  private progress = 0;
-  private status: RaydioStatus = Stopped;
-
-  private validTransitions: Map<RaydioStatus, RaydioCommand[]> = [
-    [Stopped, [Mute, Play, SetVolume]],
-    [Buffering, [Mute, Pause, SetVolume, Stop]],
-    [Playing, [Mute, Pause, Play, SetVolume, Stop]],
-    [Paused, [Mute, Play, SetVolume, Stop]],
-  ];
+  private validTransitions: Map<RaydioStatus, RaydioCommand[]> = new Map([
+    [Stopped, [Play]],
+    [Buffering, [Pause, Stop]],
+    [Playing, [Pause, Play, Stop]],
+    [Paused, [Play, Stop]],
+  ]);
 
   constructor(options?: Partial<RaydioOptions>) {
     this.options = { ...RaydioOptionsDefaults, ...options };
-    this.commands = new Map([
-      [Mute, console.log],
-      [Pause, console.log],
-      [Play, console.log],
-      [SetVolume, console.log],
-      [Stop, console.log],
-    ]);
   }
 
-  public configure(options: Partial<RaydioOptions>): void {
-    this.options = { ...RaydioOptionsDefaults, ...options };
-  }
-
-  private executeCommand(command: RaydioCommand, ...args) {
-    if (this.validateCommand(command)) {
-      this.commands.get(command)(...args);
+  private executeCommand(command: RaydioCommand, ...args): boolean {
+    if (this.validTransitions.get(this.currentStatus).includes(command)) {
+      console.log(command, args);
+      return true;
     } else {
-      throw new Error("[Raydio] Invalid command.");
+      return false;
     }
   }
 
-  private validateCommand(command: RaydioCommand) {
-    return this.commands.has(command);
+  public pause(): boolean {
+    return this.executeCommand(Pause);
   }
 
-  public mute(): void {
-    this.executeCommand(Mute);
+  public play(playable: Playable): boolean {
+    return this.executeCommand(Play, playable);
   }
 
-  public pause(): void {
-    this.executeCommand(Pause);
-  }
-
-  public play(playable: Playable): void {
-    this.executeCommand(Play, playable);
-  }
-
-  public setVolume(volume: number): void {
-    this.executeCommand(SetVolume, volume);
-  }
-
-  public stop(): void {
-    this.executeCommand(Stop);
+  public stop(): boolean {
+    return this.executeCommand(Stop);
   }
 }
