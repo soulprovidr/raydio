@@ -9,7 +9,7 @@
     "module": "commonjs",
     "skipLibCheck": true,
     "strict": false,
-    "target": "ES2015"
+    "target": "ES5"
   },
   "display": "Recommended"
 }
