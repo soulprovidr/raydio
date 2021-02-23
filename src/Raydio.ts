@@ -1,4 +1,4 @@
-import { Command, Track, RaydioOptions, RaydioStatus } from "./types";
+import { Command, IRaydio, Track, RaydioOptions, RaydioStatus } from "./types";
 
 const { Pause, Play, Stop } = Command;
 const { Stopped, Buffering, Paused, Playing } = RaydioStatus;
@@ -7,7 +7,7 @@ export const RaydioOptionsDefaults: RaydioOptions = {
   volume: 1,
 };
 
-export class Raydio {
+export class Raydio implements IRaydio {
   static validCommands: Map<RaydioStatus, Command[]> = new Map([
     [Stopped, [Play]],
     [Buffering, [Pause, Stop]],

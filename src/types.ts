@@ -6,6 +6,12 @@ export enum Command {
   Stop = "STOP",
 }
 
+export interface IRaydio {
+  pause(): void;
+  play(track: Track): void;
+  stop(): void;
+}
+
 export interface Track {
   readonly duration: Optional<number>;
   readonly meta: TrackMeta;
