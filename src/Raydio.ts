@@ -1,61 +1,46 @@
-import { Playable } from "./Playable";
+import { Command, Track, RaydioOptions, RaydioStatus } from "./types";
 
-export enum RaydioCommand {
-  Pause = "PAUSE",
-  Play = "PLAY",
-  Stop = "STOP",
-}
-
-export interface RaydioOptions {
-  playlist: Playable[];
-}
-
-export const RaydioOptionsDefaults: RaydioOptions = {
-  playlist: [],
-};
-
-export enum RaydioStatus {
-  Stopped,
-  Buffering,
-  Playing,
-  Paused,
-}
-
-const { Pause, Play, Stop } = RaydioCommand;
+const { Pause, Play, Stop } = Command;
 const { Stopped, Buffering, Paused, Playing } = RaydioStatus;
 
+export const RaydioOptionsDefaults: RaydioOptions = {
+  volume: 1,
+};
+
 export class Raydio {
-  private currentStatus: RaydioStatus = Stopped;
-  private options: RaydioOptions;
-  private validTransitions: Map<RaydioStatus, RaydioCommand[]> = new Map([
+  static validCommands: Map<RaydioStatus, Command[]> = new Map([
     [Stopped, [Play]],
     [Buffering, [Pause, Stop]],
     [Playing, [Pause, Play, Stop]],
     [Paused, [Play, Stop]],
   ]);
 
+  static validateCommand(status: RaydioStatus, command: Command): boolean {
+    return Raydio.validCommands.get(status).includes(command);
+  }
+
+  private currentStatus: RaydioStatus = Stopped;
+  private options: RaydioOptions;
+
   constructor(options?: Partial<RaydioOptions>) {
     this.options = { ...RaydioOptionsDefaults, ...options };
   }
 
-  private executeCommand(command: RaydioCommand, ...args): boolean {
-    if (this.validTransitions.get(this.currentStatus).includes(command)) {
+  private executeCommand(command: Command, ...args): void {
+    if (Raydio.validateCommand(this.currentStatus, command)) {
       console.log(command, args);
-      return true;
-    } else {
-      return false;
     }
   }
 
-  public pause(): boolean {
-    return this.executeCommand(Pause);
+  public pause(): void {
+    this.executeCommand(Pause);
   }
 
-  public play(playable: Playable): boolean {
-    return this.executeCommand(Play, playable);
+  public play(track: Track): void {
+    this.executeCommand(Play, track);
   }
 
-  public stop(): boolean {
-    return this.executeCommand(Stop);
+  public stop(): void {
+    this.executeCommand(Stop);
   }
 }
