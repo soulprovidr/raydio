@@ -1,9 +1,8 @@
 module.exports = {
-  "*.{ts}": [
+  "!*.js": [
     "tsc -noEmit",
     "eslint --fix",
     "prettier --write",
     "jest --bail --findRelatedTests",
   ],
-  "*.{json}": "prettier --write",
 };
