@@ -1,21 +1,47 @@
+import { EventEmitter } from "events";
+
 type Optional<T> = T | undefined;
 
 export enum Command {
-  Pause = "PAUSE",
-  Play = "PLAY",
-  Stop = "STOP",
+  Load = "load",
+  Pause = "pause",
+  Play = "play",
+  Stop = "stop",
 }
 
-export interface IRaydio {
+export interface Provider extends EventEmitter {
+  load(track: Track): void;
   pause(): void;
-  play(track: Track): void;
+  play(startPos?: number): void;
   stop(): void;
+}
+
+export interface ProviderConstructable {
+  new (options?: Record<string, unknown>): Provider;
+}
+
+export interface ProviderConfig {
+  type: TrackType & string;
+  provider: ProviderConstructable;
+  options?: Record<string, unknown>;
+}
+
+export interface RaydioOptions {
+  providers?: ProviderConfig[];
+  strictMode?: boolean | false;
+}
+
+export enum RaydioStatus {
+  Unstarted = "unstarted",
+  Stopped = "stopped",
+  Buffering = "buffering",
+  Playing = "playing",
+  Paused = "paused",
 }
 
 export interface Track {
   readonly duration: Optional<number>;
   readonly meta: TrackMeta;
-  readonly progress: Optional<number>;
   readonly src: string;
   readonly type: TrackType;
 }
@@ -28,15 +54,4 @@ export interface TrackMeta {
 
 export enum TrackType {
   MP3 = "MP3",
-}
-
-export interface RaydioOptions {
-  volume: number;
-}
-
-export enum RaydioStatus {
-  Stopped = "STOPPED",
-  Buffering = "BUFFERING",
-  Playing = "PLAYING",
-  Paused = "PAUSED",
 }
